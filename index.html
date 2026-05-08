@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Marketplace — Стратегический анализ</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF9F7;
+    --snow: #FFFFFF;
+    --blush: #F2EBE3;
+    --sage: #D4E2D4;
+    --sky: #DDE8F0;
+    --lavender: #E8E2F0;
+    --peach: #F0E2D8;
+    --gold: #C9A96E;
+    --gold-light: #E8D4AA;
+    --text-primary: #1A1A1A;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --glass: rgba(255,255,255,0.72);
+    --glass-border: rgba(255,255,255,0.5);
+    --shadow: 0 20px 60px rgba(0,0,0,0.08);
+    --shadow-deep: 0 40px 100px rgba(0,0,0,0.14);
+    --radius: 24px;
+    --radius-sm: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cream);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* === BACKGROUNDS === */
+  .bg-orbs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #E8D4C0, #F0E2D8); top: -200px; right: -100px; animation-delay: 0s; }
+  .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #C8D8E8, #DDE8F0); bottom: 20%; left: -150px; animation-delay: -6s; }
+  .orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, #D4E2D4, #E2EDD4); top: 50%; right: 10%; animation-delay: -12s; }
+  .orb-4 { width: 300px; height: 300px; background: radial-gradient(circle, #E8E2F0, #F0E8F2); top: 30%; left: 30%; animation-delay: -4s; }
+  @keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 20px) scale(1.05); }
+  }
+
+  /* === HOME SCREEN === */
+  #home {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 60px 40px 80px;
+  }
+
+  .logo-bar {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 70px;
+  }
+  .logo-mark {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .logo-mark span { color: var(--gold); }
+
+  .hero-text {
+    text-align: center;
+    margin-bottom: 80px;
+    max-width: 800px;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+  .hero-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* === MAIN GRID === */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: var(--shadow-deep);
+    border-color: rgba(255,255,255,0.8);
+  }
+  .card:hover .card-arrow { transform: translateX(4px); opacity: 1; }
+
+  .card-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-tag::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--gold);
+    display: block;
+  }
+  .card-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .card-arrow {
+    position: absolute;
+    bottom: 28px;
+    right: 28px;
+    font-size: 18px;
+    color: var(--gold);
+    opacity: 0.5;
+    transition: all 0.3s;
+  }
+
+  .card-wide { grid-column: span 2; }
+  .card-tall { grid-row: span 2; }
+
+  /* Accent colors per card */
+  .card-blue { background: linear-gradient(135deg, rgba(221,232,240,0.7), rgba(255,255,255,0.7)); }
+  .card-green { background: linear-gradient(135deg, rgba(212,226,212,0.7), rgba(255,255,255,0.7)); }
+  .card-peach { background: linear-gradient(135deg, rgba(240,226,216,0.7), rgba(255,255,255,0.7)); }
+  .card-lavender { background: linear-gradient(135deg, rgba(232,226,240,0.7), rgba(255,255,255,0.7)); }
+  .card-gold { background: linear-gradient(135deg, rgba(201,169,110,0.15), rgba(255,255,255,0.7)); }
+
+  /* === DETAIL VIEWS === */
+  .detail-view {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    overflow-y: auto;
+    background: var(--cream);
+  }
+  .detail-view.active {
+    display: block;
+    animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .detail-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(250,249,247,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gold);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background 0.2s;
+  }
+  .back-btn:hover { background: rgba(201,169,110,0.1); }
+  .detail-header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .detail-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  .detail-hero {
+    margin-bottom: 60px;
+    text-align: center;
+  }
+  .detail-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .detail-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .detail-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* === GLASS PANEL === */
+  .glass-panel {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(201,169,110,0.4), transparent);
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .panel-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* === GRIDS INSIDE DETAIL === */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+
+  /* === SLIDER COMPONENT === */
+  .slider-widget {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .slider-row {
+    margin-bottom: 28px;
+  }
+  .slider-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .slider-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .slider-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    min-width: 60px;
+    text-align: right;
+  }
+  input[type=range] {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold) var(--val,50%), rgba(0,0,0,0.1) var(--val,50%));
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--snow);
+    border: 2px solid var(--gold);
+    box-shadow: 0 2px 10px rgba(201,169,110,0.4);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+  .metrics-display {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .metric-box {
+    background: rgba(255,255,255,0.5);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  .metric-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .metric-trend {
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .trend-up { color: #2EA44F; }
+  .trend-down { color: #E63946; }
+
+  /* === RISK MAP === */
+  .risk-map-widget {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 8px;
+    margin-top: 24px;
+    position: relative;
+  }
+  .risk-axis-y {
+    position: absolute;
+    left: -60px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .risk-axis-x {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 12px;
+  }
+  .risk-cell {
+    border-radius: 12px;
+    padding: 14px;
+    min-height: 80px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+  }
+  .risk-cell:hover { transform: scale(1.04); box-shadow: 0 8px 30px rgba(0,0,0,0.12); z-index: 2; }
+  .risk-cell.low { background: rgba(212,226,212,0.6); border: 1px solid rgba(212,226,212,0.8); }
+  .risk-cell.medium { background: rgba(240,226,200,0.6); border: 1px solid rgba(240,226,200,0.9); }
+  .risk-cell.high { background: rgba(240,200,200,0.6); border: 1px solid rgba(240,190,190,0.9); }
+  .risk-cell.critical { background: rgba(230,150,150,0.5); border: 1px solid rgba(220,120,120,0.8); }
+  .risk-cell-label { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .risk-cell-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
+  .risk-dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 8px; }
+  .dot-low { background: #5BA85C; }
+  .dot-med { background: #D4A04C; }
+  .dot-high { background: #E05A5A; }
+  .dot-critical { background: #CC2222; }
+
+  .risk-legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* === TIMELINE === */
+  .timeline-widget {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    margin-top: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold), rgba(201,169,110,0.1));
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+    cursor: pointer;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: -32px;
+    top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--snow);
+    border: 2px solid var(--gold);
+    transition: all 0.25s;
+    box-shadow: 0 0 0 4px rgba(201,169,110,0.1);
+  }
+  .timeline-item:hover .timeline-dot {
+    background: var(--gold);
+    box-shadow: 0 0 0 8px rgba(201,169,110,0.15);
+    transform: scale(1.2);
+  }
+  .timeline-item:hover .timeline-body { background: rgba(255,255,255,0.7); }
+  .timeline-phase {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .timeline-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .timeline-body {
+    background: rgba(255,255,255,0.4);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    border: 1px solid rgba(255,255,255,0.6);
+    transition: background 0.2s;
+  }
+  .timeline-tasks {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .timeline-tasks li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .timeline-tasks li::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+    font-size: 12px;
+    margin-top: 1px;
+  }
+  .timeline-goal {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-top: 10px;
+  }
+
+  /* === PREMORTEM === */
+  .premortem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .premortem-card {
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .premortem-card::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    font-size: 16px;
+    color: var(--gold);
+    opacity: 0;
+    transition: all 0.25s;
+  }
+  .premortem-card:hover::after { opacity: 1; right: 16px; }
+  .premortem-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .premortem-card.p1 { background: rgba(240,200,200,0.35); border: 1px solid rgba(220,150,150,0.5); }
+  .premortem-card.p2 { background: rgba(240,220,190,0.35); border: 1px solid rgba(220,180,130,0.5); }
+  .premortem-card.p3 { background: rgba(212,226,212,0.35); border: 1px solid rgba(160,200,160,0.5); }
+  .premortem-priority {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .badge-red { background: rgba(220,50,50,0.15); color: #CC2222; }
+  .badge-yellow { background: rgba(200,160,50,0.15); color: #996600; }
+  .badge-green { background: rgba(80,160,80,0.15); color: #2A7A2A; }
+  .premortem-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+  .premortem-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Expanded detail popup */
+  .premortem-popup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+  .premortem-popup.open { display: flex; animation: fadeIn 0.3s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .popup-box {
+    background: var(--snow);
+    border-radius: var(--radius);
+    padding: 48px;
+    max-width: 620px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-deep);
+    position: relative;
+    animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .popup-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.06);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: background 0.2s;
+  }
+  .popup-close:hover { background: rgba(0,0,0,0.12); }
+
+  /* === ARCH DIAGRAM === */
+  .arch-diagram {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .arch-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 28px;
+  }
+  .arch-layer {
+    border-radius: 14px;
+    padding: 20px 28px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+  }
+  .arch-layer:hover { transform: translateX(8px); }
+  .arch-layer-1 { background: rgba(240,226,216,0.7); border-color: rgba(220,200,180,0.5); }
+  .arch-layer-2 { background: rgba(221,232,240,0.7); border-color: rgba(180,210,230,0.5); }
+  .arch-layer-3 { background: rgba(212,226,212,0.7); border-color: rgba(170,210,170,0.5); }
+  .arch-layer-num {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 48px;
+    font-weight: 800;
+    opacity: 0.08;
+    font-family: 'Playfair Display', serif;
+    color: var(--text-primary);
+  }
+  .arch-layer-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+  .arch-layer-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .arch-connectors {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0;
+    color: var(--gold);
+    font-size: 14px;
+    opacity: 0.5;
+  }
+
+  /* === SKILLS CAROUSEL === */
+  .skills-carousel {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .skills-track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-light) transparent;
+    margin-top: 24px;
+    scroll-snap-type: x mandatory;
+  }
+  .skills-track::-webkit-scrollbar { height: 4px; }
+  .skills-track::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 2px; }
+  .skill-chip {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 20px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+  .skill-chip:hover, .skill-chip.active {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(201,169,110,0.3);
+  }
+  .skill-chip-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .skill-chip-cat { font-size: 11px; opacity: 0.7; }
+
+  .skill-detail-panel {
+    margin-top: 24px;
+    background: rgba(255,255,255,0.5);
+    border-radius: var(--radius-sm);
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,0.7);
+    min-height: 120px;
+    animation: fadeIn 0.25s;
+  }
+  .skill-detail-title { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+  .skill-detail-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* === BUSINESS TABLE === */
+  .biz-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .biz-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .biz-table td {
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .biz-table tr:hover td { background: rgba(255,255,255,0.4); }
+  .biz-table .td-bold { font-weight: 600; color: var(--text-primary); }
+  .biz-table .td-gold { color: var(--gold); font-weight: 700; }
+
+  /* === SUCCESS PROBABILITY === */
+  .prob-widget {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .prob-bars { margin-top: 24px; }
+  .prob-row { margin-bottom: 20px; }
+  .prob-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .prob-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .prob-pct { font-size: 14px; font-weight: 700; color: var(--text-secondary); }
+  .prob-bar-track {
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .prob-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+  }
+  .prob-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 0 4px 4px 0;
+  }
+  .fill-critical { background: linear-gradient(90deg, #E8A0A0, #CC5555); }
+  .fill-high { background: linear-gradient(90deg, #E8C07A, #C9A040); }
+  .fill-med { background: linear-gradient(90deg, #A0C0A0, #5A8A5A); }
+  .fill-low { background: linear-gradient(90deg, #A0C0D8, #5A8AAA); }
+
+  /* === INDICATORS === */
+  .indicators-widget {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .indicators-table { margin-top: 24px; }
+  .indicator-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 2fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .indicator-row:hover { background: rgba(255,255,255,0.4); padding-left: 8px; }
+  .indicator-row.header { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); cursor: default; padding-bottom: 8px; }
+  .indicator-row.header:hover { background: none; padding-left: 0; }
+  .ind-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .ind-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .ind-yellow { background: rgba(220,180,50,0.15); color: #886600; }
+  .ind-red { background: rgba(200,50,50,0.12); color: #AA2222; }
+  .ind-action { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+  /* === COMPETITIVE MATRIX === */
+  .comp-matrix {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .matrix-table { width: 100%; border-collapse: collapse; margin-top: 24px; min-width: 600px; }
+  .matrix-table th {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 2px solid rgba(0,0,0,0.08);
+  }
+  .matrix-table th:first-child { text-align: left; }
+  .matrix-table td {
+    padding: 14px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    font-size: 18px;
+    cursor: default;
+  }
+  .matrix-table td:first-child { text-align: left; font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .matrix-table tr:hover td { background: rgba(255,255,255,0.3); }
+  .our-col { background: rgba(201,169,110,0.08); }
+
+  /* === PRICING SLIDER === */
+  .pricing-widget {
+    background: var(--glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .pricing-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+  .pricing-card {
+    border-radius: var(--radius-sm);
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .pricing-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-deep); }
+  .pricing-card.featured::before {
+    content: 'Рекомендуем';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .pricing-card.p-basic { background: rgba(240,240,240,0.5); border: 1px solid rgba(220,220,220,0.5); }
+  .pricing-card.p-pro { background: rgba(201,169,110,0.12); border: 2px solid rgba(201,169,110,0.4); }
+  .pricing-card.p-ent { background: rgba(30,30,30,0.06); border: 1px solid rgba(30,30,30,0.1); }
+  .pricing-name { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .pricing-price { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+  .pricing-per { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .pricing-feat { font-size: 13px; color: var(--text-secondary); line-height: 2; }
+  .pricing-margin { font-size: 11px; font-weight: 700; color: var(--gold); margin-top: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* Scroll indicator on home */
+  .scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 5;
+    opacity: 0.5;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-4px); } }
+  .scroll-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; }
+
+  /* Navigation breadcrumb */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+  .breadcrumb span { color: var(--gold); }
+
+  @media (max-width: 900px) {
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .card-wide { grid-column: span 1; }
+    .two-col, .three-col, .metrics-display, .pricing-cards, .premortem-grid { grid-template-columns: 1fr; }
+    .detail-content { padding: 40px 20px 80px; }
+    #home { padding: 40px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<!-- ===== HOME SCREEN ===== -->
+<div id="home">
+  <div class="logo-bar">
+    <div class="logo-mark">Open<span>Claw</span> Marketplace</div>
+    <div style="font-size:13px;color:var(--text-muted)">Стратегический анализ · 2026</div>
+  </div>
+
+  <div class="hero-text">
+    <span class="hero-eyebrow">Полный разбор проекта</span>
+    <h1 class="hero-title">От идеи до<br>маркетплейса</h1>
+    <p class="hero-subtitle">Интерактивный анализ бизнес-архитектуры, рисков и дорожной карты проекта OpenClaw Marketplace</p>
+  </div>
+
+  <div class="cards-grid">
+    <!-- Row 1 -->
+    <div class="card card-blue" onclick="openDetail('architecture')">
+      <span class="card-tag">Архитектура</span>
+      <span class="card-icon"></span>
+      <div class="card-title">Продуктовая архитектура</div>
+      <div class="card-desc">Трёхуровневая система: безопасность, хостинг, маркетплейс</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="card card-peach card-wide" onclick="openDetail('business')">
+      <span class="card-tag">Бизнес-модель</span>
+      <span class="card-icon"></span>
+      <div class="card-title">Финансовая модель и монетизация</div>
+      <div class="card-desc">Шесть источников дохода, юнит-экономика, маржинальность по тарифам</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="card card-lavender" onclick="openDetail('skills')">
+      <span class="card-tag">Экосистема</span>
+      <span class="card-icon"></span>
+      <div class="card-title">Скилы и возможности</div>
+      <div class="card-desc">Каталог навыков, категории, безопасность</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="card card-green" onclick="openDetail('premortem')">
+      <span class="card-tag">Pre-Mortem</span>
+      <span class="card-icon"></span>
+      <div class="card-title">Предсмертный разбор</div>
+      <div class="card-desc">7 причин провала, вероятности, стратегии противодействия</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="card card-gold" onclick="openDetail('risks')">
+      <span class="card-tag">Риски</span>
+      <span class="card-icon"></span>
+      <div class="card-title">Карта рисков</div>
+      <div class="card-desc">Матрица вероятность × влияние, индикаторы раннего предупреждения</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="card card-blue card-wide" onclick="openDetail('roadmap')">
+      <span class="card-tag">Дорожная карта</span>
+      <span class="card-icon"></span>
+      <div class="card-title">От MVP до масштабирования</div>
+      <div class="card-desc">4 фазы с целями и задачами: валидация → рост → масштаб → корпоратив</div>
+      <div class="card-arrow">→</div>
+    </div>
+
+    <div class="card card-peach" onclick="openDetail('competition')">
+      <span class="card-tag">Конкуренты</span>
+      <span class="card-icon"></span>
+      <div class="card-title">Конкурентный анализ</div>
+      <div class="card-desc">Сравнение с ClawHub, SetupClaw, MaxClaw и другими</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-dot"></div>
+    <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-top:4px">Нажмите на блок</div>
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: ARCHITECTURE ===== -->
+<div id="detail-architecture" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Продуктовая архитектура</div>
+    <div class="breadcrumb">Главная / <span>Архитектура</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Архитектура</div>
+      <h1 class="detail-title">Heroku + App Store<br>для OpenClaw</h1>
+      <p class="detail-subtitle">Трёхуровневая система, где каждый уровень решает одну ключевую проблему рынка</p>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="arch-diagram">
+      <div class="section-label">Интерактивная схема</div>
+      <div class="panel-title">Три уровня продукта</div>
+      <p class="panel-text">Кликайте на уровень для подробностей. Каждый уровень отвечает на «три высоких» проблемы OpenClaw.</p>
+      <div class="arch-layers">
+        <div class="arch-layer arch-layer-1" onclick="showLayerDetail(3)">
+          <div class="arch-layer-num">3</div>
+          <div class="arch-layer-title"> Уровень 3: Маркетплейс скилов</div>
+          <div class="arch-layer-desc">Создатели загружают → Безопасная проверка → One-click установка → Автоматические отчисления. Монетизация: 20-30% комиссия.</div>
+        </div>
+        <div class="arch-connectors">↕ ↕ ↕</div>
+        <div class="arch-layer arch-layer-2" onclick="showLayerDetail(2)">
+          <div class="arch-layer-num">2</div>
+          <div class="arch-layer-title"> Уровень 2: Управляемый облачный сервис</div>
+          <div class="arch-layer-desc">One-click деплой → Автообновления → Мониторинг 24/7 → Оптимизация токенов на 60-80%. Монетизация: подписка $9.99–299/мес.</div>
+        </div>
+        <div class="arch-connectors">↕ ↕ ↕</div>
+        <div class="arch-layer arch-layer-3" onclick="showLayerDetail(1)">
+          <div class="arch-layer-num">1</div>
+          <div class="arch-layer-title"> Уровень 1: Безопасная песочница</div>
+          <div class="arch-layer-desc">Перехват до выполнения → Мониторинг в рантайме → Approval для RED/YELLOW операций → Аудит логов. Основа доверия.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two col info -->
+    <div class="two-col">
+      <div class="glass-panel">
+        <div class="section-label">Проблема рынка</div>
+        <div class="panel-title">«Три высоких»</div>
+        <p class="panel-text">OpenClaw сейчас страдает тремя фундаментальными проблемами:
+          <br><br>🔴 <strong>Высокий порог входа</strong> — сложная установка, конфиги, зависимости
+          <br>🔴 <strong>Высокие риски безопасности</strong> — 20% скилов вредоносны
+          <br>🔴 <strong>Высокая стоимость</strong> — неконтролируемые расходы на токены
+          <br><br>Наш продукт закрывает все три. Кто первый решит — тот займёт рынок.
+        </p>
+      </div>
+      <div class="glass-panel">
+        <div class="section-label">Безопасность — фундамент</div>
+        <div class="panel-title">Двухуровневая защита</div>
+        <p class="panel-text">На основе LobsterShield v2:
+          <br><br>🔴 <strong>RED-операции</strong> — полная блокировка: curl│bash, удаление /etc, SUID-привилегии
+          <br>🟡 <strong>YELLOW-операции</strong> — требуют approval: доступ к .ssh, массовое удаление
+          <br><br>Все решения принимает <strong>детерминированный код</strong>, не LLM. Prompt Injection невозможен.
+          <br><br>40,000 инстансов OpenClaw уязвимы — мы защищаем всех наших.
+        </p>
+      </div>
+    </div>
+
+    <!-- Token optimization slider -->
+    <div class="slider-widget">
+      <div class="section-label">Интерактивный расчёт</div>
+      <div class="panel-title">Оптимизация стоимости токенов</div>
+      <p class="panel-text" style="margin-bottom:28px">Передвигайте ползунки чтобы рассчитать экономию для вашего объёма использования</p>
+
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">Пользователей на платформе</span>
+          <span class="slider-value" id="usersVal">500</span>
+        </div>
+        <input type="range" id="usersSlider" min="50" max="5000" value="500" oninput="updateTokenCalc()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">Средний расход токенов / пользователь / мес</span>
+          <span class="slider-value" id="tokensVal">2M</span>
+        </div>
+        <input type="range" id="tokensSlider" min="100000" max="10000000" step="100000" value="2000000" oninput="updateTokenCalc()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">Наша оптимизация (% экономии)</span>
+          <span class="slider-value" id="savingVal">65%</span>
+        </div>
+        <input type="range" id="savingSlider" min="30" max="80" value="65" oninput="updateTokenCalc()">
+      </div>
+
+      <div class="metrics-display">
+        <div class="metric-box">
+          <div class="metric-value" id="metricBefore">$3,000</div>
+          <div class="metric-label">Затраты без нас</div>
+          <div class="metric-trend trend-down">В месяц</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="metricAfter">$1,050</div>
+          <div class="metric-label">С оптимизацией</div>
+          <div class="metric-trend trend-up">В месяц</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="metricSaved">$1,950</div>
+          <div class="metric-label">Экономия клиента</div>
+          <div class="metric-trend trend-up" id="metricSavedPct">65% экономии</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: BUSINESS MODEL ===== -->
+<div id="detail-business" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Финансовая модель</div>
+    <div class="breadcrumb">Главная / <span>Бизнес</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Монетизация</div>
+      <h1 class="detail-title">Шесть потоков дохода</h1>
+      <p class="detail-subtitle">От подписки до комиссии маркетплейса — диверсифицированная модель с маржой 35–95%</p>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="pricing-widget">
+      <div class="section-label">Тарифная сетка</div>
+      <div class="panel-title">Подписки и планы</div>
+      <div class="pricing-cards">
+        <div class="pricing-card p-basic" onclick="selectPlan('basic')">
+          <div class="pricing-name">Базовый</div>
+          <div class="pricing-price">$9<span style="font-size:24px">.99</span></div>
+          <div class="pricing-per">/ месяц</div>
+          <div class="pricing-feat">✓ 1 бот<br>✓ 10 скилов<br>✓ 1 облачный провайдер<br>✓ Email-поддержка</div>
+          <div class="pricing-margin">Маржа: ~35%</div>
+        </div>
+        <div class="pricing-card p-pro featured" onclick="selectPlan('pro')">
+          <div class="pricing-name">Про</div>
+          <div class="pricing-price">$29<span style="font-size:24px">.99</span></div>
+          <div class="pricing-per">/ месяц</div>
+          <div class="pricing-feat">✓ 3 бота<br>✓ Все скилы маркетплейса<br>✓ Оптимизация токенов<br>✓ Приоритетная поддержка</div>
+          <div class="pricing-margin">Маржа: ~65%</div>
+        </div>
+        <div class="pricing-card p-ent" onclick="selectPlan('ent')">
+          <div class="pricing-name">Корпоратив</div>
+          <div class="pricing-price">$299<span style="font-size:18px">+</span></div>
+          <div class="pricing-per">/ месяц (SLA)</div>
+          <div class="pricing-feat">✓ Неограниченные боты<br>✓ Приватное облако<br>✓ SLA 99.9%<br>✓ Security audit</div>
+          <div class="pricing-margin">Маржа: ~80%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Streams Table -->
+    <div class="glass-panel">
+      <div class="section-label">Все источники дохода</div>
+      <div class="panel-title">Полная модель монетизации</div>
+      <table class="biz-table">
+        <thead>
+          <tr>
+            <th>Источник</th>
+            <th>Цена</th>
+            <th>Аудитория</th>
+            <th>Маржа</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">Хостинг Базовый</td>
+            <td>$9.99/мес</td>
+            <td>Индивидуалы, гики</td>
+            <td class="td-gold">70%</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Хостинг Про</td>
+            <td>$29.99/мес</td>
+            <td>Продвинутые пользователи</td>
+            <td class="td-gold">65%</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Корпоративный хостинг</td>
+            <td>$299–999/мес</td>
+            <td>B2B, компании</td>
+            <td class="td-gold">80%</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Комиссия маркетплейса</td>
+            <td>20% от продаж</td>
+            <td>Авторы скилов</td>
+            <td class="td-gold">95%</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Пакет оптимизации токенов</td>
+            <td>$0.50 / 1M токенов</td>
+            <td>Высокочастотные</td>
+            <td class="td-gold">40%</td>
+          </tr>
+          <tr>
+            <td class="td-bold">API для разработчиков</td>
+            <td>$0.01 / вызов</td>
+            <td>Dev-аудитория</td>
+            <td class="td-gold">60%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Unit Economics Slider -->
+    <div class="slider-widget">
+      <div class="section-label">Юнит-экономика</div>
+      <div class="panel-title">Расчёт прибыли на пользователя</div>
+      <p class="panel-text" style="margin-bottom:28px">Настройте параметры чтобы увидеть реальную экономику на каждого клиента</p>
+
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">ARPU (средний доход с пользователя/мес)</span>
+          <span class="slider-value" id="arpuVal">$14</span>
+        </div>
+        <input type="range" id="arpuSlider" min="5" max="50" value="14" oninput="updateUnitEcon()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">Стоимость сервера на пользователя</span>
+          <span class="slider-value" id="serverVal">$3</span>
+        </div>
+        <input type="range" id="serverSlider" min="1" max="10" value="3" oninput="updateUnitEcon()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">Стоимость токенов на пользователя</span>
+          <span class="slider-value" id="tokenCostVal">$2</span>
+        </div>
+        <input type="range" id="tokenCostSlider" min="0.5" max="8" step="0.5" value="2" oninput="updateUnitEcon()">
+      </div>
+
+      <div class="metrics-display">
+        <div class="metric-box">
+          <div class="metric-value" id="ueRevenue">$14</div>
+          <div class="metric-label">Доход / юзер</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="ueCost">$9</div>
+          <div class="metric-label">Затраты / юзер</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="ueMargin" style="color:var(--gold)">$5</div>
+          <div class="metric-label">Прибыль / юзер</div>
+          <div class="metric-trend" id="ueMarginPct">36%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: SKILLS ===== -->
+<div id="detail-skills" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-2"></div><div class="orb orb-4"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Экосистема скилов</div>
+    <div class="breadcrumb">Главная / <span>Скилы</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Маркетплейс</div>
+      <h1 class="detail-title">13,000+ скилов,<br>53 безопасных</h1>
+      <p class="detail-subtitle">Экосистема навыков OpenClaw — возможности, угрозы и наша роль в качестве стража безопасности</p>
+    </div>
+
+    <!-- Skills carousel -->
+    <div class="skills-carousel">
+      <div class="section-label">Каталог скилов</div>
+      <div class="panel-title">Выберите категорию скила</div>
+
+      <div class="skills-track" id="skillsTrack">
+        <div class="skill-chip active" onclick="showSkill('browser')">
+          <div class="skill-chip-name"> Браузер</div>
+          <div class="skill-chip-cat">agent-browser</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('files')">
+          <div class="skill-chip-name"> Файлы</div>
+          <div class="skill-chip-cat">file-system</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('media')">
+          <div class="skill-chip-name"> Медиа</div>
+          <div class="skill-chip-cat">media-processing</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('code')">
+          <div class="skill-chip-name"> Код</div>
+          <div class="skill-chip-cat">code-runner</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('api')">
+          <div class="skill-chip-name"> API</div>
+          <div class="skill-chip-cat">external-api</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('office')">
+          <div class="skill-chip-name"> Офис</div>
+          <div class="skill-chip-cat">gog / excel</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('ai')">
+          <div class="skill-chip-name"> AI</div>
+          <div class="skill-chip-cat">memory / self-improve</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('home')">
+          <div class="skill-chip-name"> Умный дом</div>
+          <div class="skill-chip-cat">smart-home</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('travel')">
+          <div class="skill-chip-name"> Путешествия</div>
+          <div class="skill-chip-cat">trip-planner</div>
+        </div>
+        <div class="skill-chip" onclick="showSkill('security')">
+          <div class="skill-chip-name"> Безопасность</div>
+          <div class="skill-chip-cat">security-audit</div>
+        </div>
+      </div>
+
+      <div class="skill-detail-panel" id="skillDetailPanel">
+        <div class="skill-detail-title"> Браузерная автоматизация (agent-browser)</div>
+        <div class="skill-detail-desc">Полное управление браузером: авторизация на сайтах, нажатие кнопок, заполнение форм, скриншоты, извлечение данных. Используется через Puppeteer. Мощнейший скил для автоматизации рутинных веб-задач. Безопасность: HIGH — может получить доступ к любым сайтам, куда авторизован пользователь. В нашем маркетплейсе: обязательная пометка «требует повышенного доверия».</div>
+      </div>
+    </div>
+
+    <!-- Security Warning -->
+    <div class="glass-panel" style="background:linear-gradient(135deg,rgba(240,200,200,0.4),rgba(255,255,255,0.7))">
+      <div class="section-label" style="color:#CC4444">Угрозы безопасности</div>
+      <div class="panel-title">Почему безопасность — наше УТП</div>
+      <div class="three-col" style="margin-top:20px">
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:48px;font-family:'Playfair Display',serif;font-weight:700;color:#CC4444">20%</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:6px">публичных скилов<br>были вредоносными</div>
+        </div>
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:48px;font-family:'Playfair Display',serif;font-weight:700;color:#CC4444">341</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:6px">вредоносных скилов<br>найдено в ClawHub</div>
+        </div>
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:48px;font-family:'Playfair Display',serif;font-weight:700;color:#CC4444">60%</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:6px">инстансов в сети<br>уязвимы прямо сейчас</div>
+        </div>
+      </div>
+      <p class="panel-text">Атака ClawHavoc в 2026 году заразила тысячи систем через поддельные скилы. Официальный ClawHub не имеет автоматической проверки. <strong>Наш сканер безопасности — единственное решение на рынке с детерминированным кодом проверки, не зависящим от LLM.</strong></p>
+    </div>
+
+    <!-- Safe sources comparison -->
+    <div class="glass-panel">
+      <div class="section-label">Сравнение источников</div>
+      <div class="panel-title">Где брать скилы безопасно?</div>
+      <table class="biz-table">
+        <thead>
+          <tr><th>Источник</th><th>Кол-во скилов</th><th>Безопасность</th><th>Наша оценка</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">53 официальных скила</td>
+            <td>53</td>
+            <td>🟢 Максимальная</td>
+            <td class="td-gold">Рекомендуем</td>
+          </tr>
+          <tr>
+            <td class="td-bold">ClawHub (после чистки)</td>
+            <td>~2,868</td>
+            <td>🟡 Высокая</td>
+            <td>С проверкой</td>
+          </tr>
+          <tr>
+            <td class="td-bold">ClawHub (до чистки 2026)</td>
+            <td>~5,700</td>
+            <td>🔴 Низкая</td>
+            <td style="color:#CC4444">Не рекомендуем</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Community-списки</td>
+            <td>~2,800</td>
+            <td>🔴 Не проверяется</td>
+            <td style="color:#CC4444">Опасно</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: PREMORTEM ===== -->
+<div id="detail-premortem" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-3"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Pre-Mortem анализ</div>
+    <div class="breadcrumb">Главная / <span>Pre-Mortem</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Предсмертный разбор</div>
+      <h1 class="detail-title">Проект провалился.<br>Почему?</h1>
+      <p class="detail-subtitle">Представьте: прошёл год, вы потратили деньги и время. Что именно пошло не так? Кликайте на карточки.</p>
+    </div>
+
+    <!-- Probability Chart -->
+    <div class="prob-widget">
+      <div class="section-label">Вероятности провала</div>
+      <div class="panel-title">Шкала угроз (1–10)</div>
+      <div class="prob-bars" id="probBars">
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">Нет канала привлечения клиентов</span><span class="prob-pct">8/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-critical" style="width:80%"></div></div>
+        </div>
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">Инцидент безопасности → потеря доверия</span><span class="prob-pct">7/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-critical" style="width:70%"></div></div>
+        </div>
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">Затянутая разработка — выход слишком поздно</span><span class="prob-pct">7/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-critical" style="width:70%"></div></div>
+        </div>
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">Никому не нужен продукт (рынок маленький)</span><span class="prob-pct">6/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-high" style="width:60%"></div></div>
+        </div>
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">Нет авторов скилов (проблема курицы/яйца)</span><span class="prob-pct">6/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-high" style="width:60%"></div></div>
+        </div>
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">Юнит-экономика отрицательная</span><span class="prob-pct">5/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-med" style="width:50%"></div></div>
+        </div>
+        <div class="prob-row">
+          <div class="prob-header"><span class="prob-name">OpenClaw умирает / становится проприетарным</span><span class="prob-pct">4/10</span></div>
+          <div class="prob-bar-track"><div class="prob-bar-fill fill-low" style="width:40%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-mortem cards -->
+    <div class="section-label" style="margin-bottom:16px">Нажмите на причину для подробного разбора</div>
+    <div class="premortem-grid">
+      <div class="premortem-card p1" onclick="showPremortem(1)">
+        <div class="premortem-priority"><span class="badge badge-red">🔴 Критично</span></div>
+        <div class="premortem-title">Нет канала привлечения клиентов</div>
+        <div class="premortem-desc">Вы построили отличный продукт, но никто о нём не узнал. SEO — ноль, маркетинговый бюджет — ноль, стратегия — «сделаем сайт и само придёт».</div>
+      </div>
+      <div class="premortem-card p1" onclick="showPremortem(2)">
+        <div class="premortem-priority"><span class="badge badge-red">🔴 Критично</span></div>
+        <div class="premortem-title">Решили проблему, которой нет</div>
+        <div class="premortem-desc">Аудитория OpenClaw — разработчики, которые ЛЮБЯТ возиться с установкой. Платить $10/мес за «удобство» они не готовы.</div>
+      </div>
+      <div class="premortem-card p1" onclick="showPremortem(3)">
+        <div class="premortem-priority"><span class="badge badge-red">🔴 Критично</span></div>
+        <div class="premortem-title">Инцидент безопасности → крах доверия</div>
+        <div class="premortem-desc">Один вредоносный скил прошёл «проверку» и утёк API-ключи пользователей. Гневный пост на Reddit — и репутация убита навсегда.</div>
+      </div>
+      <div class="premortem-card p2" onclick="showPremortem(4)">
+        <div class="premortem-priority"><span class="badge badge-yellow">🟡 Высокий</span></div>
+        <div class="premortem-title">Затянули разработку</div>
+        <div class="premortem-desc">6-9 месяцев писали «идеальный продукт», а когда вышли — конкуренты уже заняли нишу, и OpenClaw API изменился.</div>
+      </div>
+      <div class="premortem-card p2" onclick="showPremortem(5)">
+        <div class="premortem-priority"><span class="badge badge-yellow">🟡 Высокий</span></div>
+        <div class="premortem-title">Пустой маркетплейс</div>
+        <div class="premortem-desc">Нет авторов → нет скилов → нет пользователей → нет авторов. Классическая проблема курицы и яйца. Не решили до запуска.</div>
+      </div>
+      <div class="premortem-card p2" onclick="showPremortem(6)">
+        <div class="premortem-priority"><span class="badge badge-yellow">🟡 Высокий</span></div>
+        <div class="premortem-title">Крупные игроки дали бесплатное</div>
+        <div class="premortem-desc">Tencent WorkBuddy, MiniMax MaxClaw — бесплатные аналоги с маркетинговым бюджетом в миллиарды. Наш $10/мес не конкурирует.</div>
+      </div>
+      <div class="premortem-card p3" onclick="showPremortem(7)">
+        <div class="premortem-priority"><span class="badge badge-green">🟢 Средний</span></div>
+        <div class="premortem-title">Отрицательная юнит-экономика</div>
+        <div class="premortem-desc">Реальные затраты на пользователя $17, выручка $10. Чем больше клиентов — тем быстрее банкротство. Масштаб умножает убытки.</div>
+      </div>
+      <div class="premortem-card p3" onclick="showPremortem(8)">
+        <div class="premortem-priority"><span class="badge badge-green">🟢 Умеренный</span></div>
+        <div class="premortem-title">OpenClaw закрыт/поглощён</div>
+        <div class="premortem-desc">Весь бизнес построен вокруг одного open-source проекта. Если он умирает — умираем и мы. Основатель уже думал бросить.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: RISKS ===== -->
+<div id="detail-risks" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-4"></div><div class="orb orb-1"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Карта рисков</div>
+    <div class="breadcrumb">Главная / <span>Риски</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Матрица рисков</div>
+      <h1 class="detail-title">Полная карта угроз</h1>
+      <p class="detail-subtitle">Интерактивная матрица Вероятность × Влияние. Кликайте на ячейки для подробностей.</p>
+    </div>
+
+    <!-- Risk Matrix -->
+    <div class="risk-map-widget">
+      <div class="section-label">Интерактивная матрица</div>
+      <div class="panel-title">Риски по вероятности и влиянию</div>
+      
+      <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--text-muted);flex-shrink:0;padding-top:4px">
+          <strong>↑ Влияние</strong>
+        </div>
+        <div style="flex:1;min-width:300px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+            <!-- High impact row -->
+            <div class="risk-cell medium" onclick="showRiskDetail('token')">
+              <div class="risk-dot dot-high"></div>
+              <div class="risk-cell-label">Рост затрат токенов</div>
+              <div class="risk-cell-desc">Пользователи получают огромные счета</div>
+            </div>
+            <div class="risk-cell critical" onclick="showRiskDetail('security')">
+              <div class="risk-dot dot-critical"></div>
+              <div class="risk-cell-label">Инцидент безопасности</div>
+              <div class="risk-cell-desc">Вредоносный скил утечка данных</div>
+            </div>
+            <div class="risk-cell medium" onclick="showRiskDetail('bigtech')">
+              <div class="risk-dot dot-high"></div>
+              <div class="risk-cell-label">Бесплатные аналоги</div>
+              <div class="risk-cell-desc">Tencent/MiniMax выходят на рынок</div>
+            </div>
+            <!-- Medium impact row -->
+            <div class="risk-cell low" onclick="showRiskDetail('channel')">
+              <div class="risk-dot dot-low"></div>
+              <div class="risk-cell-label">Нет каналов трафика</div>
+              <div class="risk-cell-desc">Привлечение клиентов не работает</div>
+            </div>
+            <div class="risk-cell medium" onclick="showRiskDetail('burnout')">
+              <div class="risk-dot dot-med"></div>
+              <div class="risk-cell-label">Выгорание команды</div>
+              <div class="risk-cell-desc">Ключевые люди уходят</div>
+            </div>
+            <div class="risk-cell low" onclick="showRiskDetail('openclaw')">
+              <div class="risk-dot dot-low"></div>
+              <div class="risk-cell-label">OpenClaw закрыт</div>
+              <div class="risk-cell-desc">Платформа становится проприетарной</div>
+            </div>
+            <!-- Low impact row -->
+            <div class="risk-cell low" onclick="showRiskDetail('regul')">
+              <div class="risk-dot dot-low"></div>
+              <div class="risk-cell-label">Регулирование</div>
+              <div class="risk-cell-desc">Ужесточение требований к AI</div>
+            </div>
+            <div class="risk-cell low" onclick="showRiskDetail('econ')">
+              <div class="risk-dot dot-low"></div>
+              <div class="risk-cell-label">Экономический спад</div>
+              <div class="risk-cell-desc">Клиенты сокращают SaaS-бюджеты</div>
+            </div>
+            <div class="risk-cell low" onclick="showRiskDetail('api')">
+              <div class="risk-dot dot-low"></div>
+              <div class="risk-cell-label">Ценовая война API</div>
+              <div class="risk-cell-desc">Наше преимущество исчезает</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin-top:8px">
+            <div style="font-size:11px;color:var(--text-muted)">Низкая вероятность</div>
+            <div style="font-size:11px;color:var(--text-muted)">Средняя</div>
+            <div style="font-size:11px;color:var(--text-muted)">Высокая вероятность</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#5BA85C"></div>Низкий риск</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#D4A04C"></div>Средний риск</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#E05A5A"></div>Высокий риск</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#CC2222"></div>Критический</div>
+      </div>
+    </div>
+
+    <!-- Early Warning Indicators -->
+    <div class="indicators-widget">
+      <div class="section-label">Индикаторы раннего предупреждения</div>
+      <div class="panel-title">Система мониторинга здоровья проекта</div>
+      <p class="panel-text">Кликайте на строку чтобы увидеть рекомендованные действия</p>
+      
+      <div class="indicators-table">
+        <div class="indicator-row header">
+          <div>Индикатор</div>
+          <div>Жёлтый</div>
+          <div>Красный</div>
+          <div>Действие</div>
+        </div>
+        <div class="indicator-row" onclick="expandIndicator(this)">
+          <div class="ind-name">Новые платящие / неделя</div>
+          <div><span class="ind-badge ind-yellow">&lt; 20</span></div>
+          <div><span class="ind-badge ind-red">&lt; 10</span></div>
+          <div class="ind-action">Запуск маркетинга, UX-аудит</div>
+        </div>
+        <div class="indicator-row" onclick="expandIndicator(this)">
+          <div class="ind-name">Месячный отток пользователей</div>
+          <div><span class="ind-badge ind-yellow">&gt; 5%</span></div>
+          <div><span class="ind-badge ind-red">&gt; 10%</span></div>
+          <div class="ind-action">Интервью с ушедшими, онбординг</div>
+        </div>
+        <div class="indicator-row" onclick="expandIndicator(this)">
+          <div class="ind-name">Очередь проверки скилов</div>
+          <div><span class="ind-badge ind-yellow">&gt; 3 дней</span></div>
+          <div><span class="ind-badge ind-red">&gt; 7 дней</span></div>
+          <div class="ind-action">Дополнительный модератор</div>
+        </div>
+        <div class="indicator-row" onclick="expandIndicator(this)">
+          <div class="ind-name">Токены на пользователя / мес</div>
+          <div><span class="ind-badge ind-yellow">&gt; $5</span></div>
+          <div><span class="ind-badge ind-red">&gt; $10</span></div>
+          <div class="ind-action">Срочная оптимизация кеша</div>
+        </div>
+        <div class="indicator-row" onclick="expandIndicator(this)">
+          <div class="ind-name">Инцидентов безопасности / мес</div>
+          <div><span class="ind-badge ind-yellow">&gt; 1</span></div>
+          <div><span class="ind-badge ind-red">&gt; 3</span></div>
+          <div class="ind-action">Стоп новых фич, Security Sprint</div>
+        </div>
+        <div class="indicator-row" onclick="expandIndicator(this)">
+          <div class="ind-name">Доступность сервера (месяц)</div>
+          <div><span class="ind-badge ind-yellow">&lt; 99.5%</span></div>
+          <div><span class="ind-badge ind-red">&lt; 99%</span></div>
+          <div class="ind-action">Масштабирование, аудит архитектуры</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: ROADMAP ===== -->
+<div id="detail-roadmap" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Дорожная карта</div>
+    <div class="breadcrumb">Главная / <span>Roadmap</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Дорожная карта</div>
+      <h1 class="detail-title">От идеи<br>до $25K MRR</h1>
+      <p class="detail-subtitle">Четыре чётко структурированных фазы с конкретными целями, задачами и метриками успеха</p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-widget">
+      <div class="section-label">Интерактивная хронология</div>
+      <div class="panel-title">Путь к масштабированию</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-phase">Фаза 0 · Недели 1–2</div>
+          <div class="timeline-title">Валидация</div>
+          <div class="timeline-body">
+            <ul class="timeline-tasks">
+              <li>Развернуть OpenClaw для 5–10 пользователей вручную, фиксируя боли</li>
+              <li>Выбрать стек: песочница + деплой + маркетплейс</li>
+              <li>Поговорить с потенциальными авторами скилов об интересе к маркетплейсу</li>
+              <li>Найти 20 человек в Telegram-чатах и получить хотя бы 3 предоплаты</li>
+            </ul>
+            <div class="timeline-goal"> Цель: Подтверждённый спрос перед написанием кода</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-phase">Фаза 1 · Месяцы 1–2</div>
+          <div class="timeline-title">MVP</div>
+          <div class="timeline-body">
+            <ul class="timeline-tasks">
+              <li>Минимальная безопасная песочница (LobsterShield или упрощённая)</li>
+              <li>Базовый хостинг: 1 облачный провайдер + скрипт деплоя</li>
+              <li>Маркетплейс: интеграция ClawHub API, установка скилов</li>
+              <li>50 бета-тестеров (бесплатно) с системой сбора фидбека</li>
+            </ul>
+            <div class="timeline-goal"> Цель: Рабочий продукт за 4–6 недель</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-phase">Фаза 2 · Месяцы 3–6</div>
+          <div class="timeline-title">Рост</div>
+          <div class="timeline-body">
+            <ul class="timeline-tasks">
+              <li>Запуск платных тарифов от $9.99/мес</li>
+              <li>Платные скилы в маркетплейсе + интеграция OpenClacky</li>
+              <li>Оптимизация токенов (снижение на 60%)</li>
+              <li>Партнёрства с 1–2 VPS-провайдерами (реферальные)</li>
+            </ul>
+            <div class="timeline-goal"> Цель: 500 платящих пользователей, MRR $5,000+</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-phase">Фаза 3 · Месяцы 7–12</div>
+          <div class="timeline-title">Масштабирование</div>
+          <div class="timeline-body">
+            <ul class="timeline-tasks">
+              <li>Корпоративная версия: приватное облако + SLA 99.9%</li>
+              <li>Сертификация безопасности (ISO/SOC2)</li>
+              <li>Программа мотивации для авторов скилов</li>
+              <li>ClawManager как managed-сервис для B2B</li>
+            </ul>
+            <div class="timeline-goal"> Цель: 2,000 платящих пользователей, MRR $25,000+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success scenarios -->
+    <div class="glass-panel">
+      <div class="section-label">Сценарии успеха</div>
+      <div class="panel-title">Вероятность успеха по типу основателя</div>
+      <div class="three-col" style="margin-top:20px">
+        <div style="background:rgba(240,200,200,0.4);border-radius:16px;padding:24px;text-align:center;border:1px solid rgba(200,150,150,0.4)">
+          <div style="font-size:36px;font-weight:800;color:#CC4444;font-family:'Playfair Display',serif">&lt;5%</div>
+          <div style="font-size:13px;font-weight:600;margin:8px 0;color:var(--text-primary)">Одиночка</div>
+          <div style="font-size:12px;color:var(--text-secondary)">Без команды, без опыта в AI и DevOps</div>
+        </div>
+        <div style="background:rgba(240,220,180,0.4);border-radius:16px;padding:24px;text-align:center;border:1px solid rgba(200,170,100,0.4)">
+          <div style="font-size:36px;font-weight:800;color:#AA7700;font-family:'Playfair Display',serif">30%</div>
+          <div style="font-size:13px;font-weight:600;margin:8px 0;color:var(--text-primary)">С аудиторией</div>
+          <div style="font-size:12px;color:var(--text-secondary)">Telegram 10k+ про AI или аналогичный канал</div>
+        </div>
+        <div style="background:rgba(200,230,200,0.4);border-radius:16px;padding:24px;text-align:center;border:1px solid rgba(150,200,150,0.4)">
+          <div style="font-size:36px;font-weight:800;color:#2A7A2A;font-family:'Playfair Display',serif">50%</div>
+          <div style="font-size:13px;font-weight:600;margin:8px 0;color:var(--text-primary)">Нишевый фокус</div>
+          <div style="font-size:12px;color:var(--text-secondary)">"OpenClaw для SEO-специалистов" — конкретная вертикаль</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hedging Strategies -->
+    <div class="glass-panel">
+      <div class="section-label">Стратегии хеджирования</div>
+      <div class="panel-title">Как защитить проект от ключевых рисков</div>
+      <table class="biz-table">
+        <thead>
+          <tr><th>Риск</th><th>Стратегия хеджирования</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">OpenClaw становится проприетарным</td>
+            <td>Отвязать ключевые модули от OpenClaw; сохранить возможность перехода на другой Agent-фреймворк</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Утечка данных через безопасность</td>
+            <td>Киберстрахование; кризисный PR-план; пользователи подписывают политику безопасности</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Проблемы с финансированием</td>
+            <td>Первые 6 мес — Lean операции на средства основателей; стремление к положительному кешфлоу</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Высокий CAC (стоимость привлечения)</td>
+            <td>KOL-партнёрства; контент-маркетинг; статья «Как развернуть OpenClaw за 10 минут»</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== DETAIL: COMPETITION ===== -->
+<div id="detail-competition" class="detail-view">
+  <div class="bg-orbs"><div class="orb orb-3"></div><div class="orb orb-2"></div></div>
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Назад</button>
+    <div class="detail-header-title">Конкурентный анализ</div>
+    <div class="breadcrumb">Главная / <span>Конкуренты</span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-hero">
+      <div class="detail-eyebrow">Анализ рынка</div>
+      <h1 class="detail-title">Кто уже играет<br>на этом поле</h1>
+      <p class="detail-subtitle">Конкурентная матрица, уровни рынка и наше уникальное позиционирование</p>
+    </div>
+
+    <!-- Competitive Matrix -->
+    <div class="comp-matrix">
+      <div class="section-label">Матрица возможностей</div>
+      <div class="panel-title">Сравнение игроков по ключевым параметрам</div>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Возможность</th>
+            <th class="our-col">МЫ ⭐</th>
+            <th>ClawHub</th>
+            <th>SetupClaw</th>
+            <th>MaxClaw</th>
+            <th>DO 1-Click</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>One-click деплой</td>
+            <td class="our-col">✅</td><td>❌</td><td>⚠️</td><td>✅</td><td>✅</td>
+          </tr>
+          <tr>
+            <td>Маркетплейс скилов</td>
+            <td class="our-col">✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td>
+          </tr>
+          <tr>
+            <td>Проверка безопасности</td>
+            <td class="our-col">✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td>
+          </tr>
+          <tr>
+            <td>Оптимизация токенов</td>
+            <td class="our-col">✅</td><td>❌</td><td>❌</td><td>⚠️</td><td>❌</td>
+          </tr>
+          <tr>
+            <td>Монетизация для авторов</td>
+            <td class="our-col">✅</td><td>⚠️</td><td>❌</td><td>❌</td><td>❌</td>
+          </tr>
+          <tr>
+            <td>Managed хостинг</td>
+            <td class="our-col">✅</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td>
+          </tr>
+          <tr>
+            <td>Enterprise / SLA</td>
+            <td class="our-col">🔜</td><td>❌</td><td>⚠️</td><td>✅</td><td>⚠️</td>
+          </tr>
+          <tr>
+            <td>Цена (мес)</td>
+            <td class="our-col">$9.99+</td><td>Бесплатно</td><td>$100+</td><td>Бесплатно</td><td>$24+</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Market Levels -->
+    <div class="glass-panel">
+      <div class="section-label">Кто зарабатывает в экосистеме</div>
+      <div class="panel-title">Уровни рынка OpenClaw</div>
+      <table class="biz-table">
+        <thead>
+          <tr><th>Уровень</th><th>Кто зарабатывает</th><th>Как</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-bold">Облачные провайдеры</td>
+            <td>Tencent, Alibaba, DigitalOcean</td>
+            <td>VPS, one-click деплой</td>
+          </tr>
+          <tr>
+            <td class="td-bold">LLM-провайдеры</td>
+            <td>MiniMax, Moonshot, OpenAI</td>
+            <td>Токены (OpenClaw — «токеновая дробилка»)</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Услуги установки</td>
+            <td>SetupClaw, фрилансеры</td>
+            <td>$100–$1000 за настройку</td>
+          </tr>
+          <tr>
+            <td class="td-bold">Обучение</td>
+            <td>KOL, курсы, HelloPM</td>
+            <td>Курсы «Как заработать на OpenClaw»</td>
+          </tr>
+          <tr>
+            <td class="td-bold td-gold">МЫ</td>
+            <td class="td-gold">Managed + Marketplace</td>
+            <td class="td-gold">Подписки + комиссия + токен-опт.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Infrastructure opportunities -->
+    <div class="slider-widget">
+      <div class="section-label">Инфраструктурные возможности</div>
+      <div class="panel-title">10 способов заработать в экосистеме</div>
+      <p class="panel-text" style="margin-bottom:24px">Оцените привлекательность каждой бизнес-модели</p>
+      <div id="infraOps">
+        <!-- Will be rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===== POPUPS ===== -->
+<div class="premortem-popup" id="premortemPopup" onclick="closePremortem(event)">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePremortem()">✕</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<div class="premortem-popup" id="riskPopup" onclick="closeRisk(event)">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closeRisk()">✕</button>
+    <div id="riskContent"></div>
+  </div>
+</div>
+
+<div class="premortem-popup" id="layerPopup" onclick="closeLayer(event)">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closeLayer()">✕</button>
+    <div id="layerContent"></div>
+  </div>
+</div>
+
+
+<script>
+// === NAVIGATION ===
+function openDetail(id) {
+  document.getElementById('home').style.display = 'none';
+  const el = document.getElementById('detail-' + id);
+  el.classList.add('active');
+  window.scrollTo(0, 0);
+  // Trigger animations
+  setTimeout(() => animateProbBars(), 300);
+  setTimeout(() => animateInfraOps(), 300);
+}
+function closeDetail() {
+  document.querySelectorAll('.detail-view').forEach(d => d.classList.remove('active'));
+  document.getElementById('home').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+// === SLIDERS ===
+function fmt(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(0) + 'K';
+  return n;
+}
+function updateTokenCalc() {
+  const users = +document.getElementById('usersSlider').value;
+  const tokens = +document.getElementById('tokensSlider').value;
+  const saving = +document.getElementById('savingSlider').value;
+
+  document.getElementById('usersVal').textContent = fmt(users);
+  document.getElementById('tokensVal').textContent = fmt(tokens);
+  document.getElementById('savingVal').textContent = saving + '%';
+
+  // Cost calculation: assume $0.003 per 1000 tokens average
+  const ratePerToken = 0.003 / 1000;
+  const before = users * tokens * ratePerToken;
+  const after = before * (1 - saving/100);
+  const saved = before - after;
+
+  document.getElementById('metricBefore').textContent = '$' + before.toLocaleString('ru', {maximumFractionDigits: 0});
+  document.getElementById('metricAfter').textContent = '$' + after.toLocaleString('ru', {maximumFractionDigits: 0});
+  document.getElementById('metricSaved').textContent = '$' + saved.toLocaleString('ru', {maximumFractionDigits: 0});
+  document.getElementById('metricSavedPct').textContent = saving + '% экономии';
+
+  // Update slider gradients
+  ['usersSlider','tokensSlider','savingSlider'].forEach(id => {
+    const el = document.getElementById(id);
+    const pct = ((el.value - el.min) / (el.max - el.min) * 100).toFixed(1);
+    el.style.setProperty('--val', pct + '%');
+    el.style.background = `linear-gradient(90deg, var(--gold) ${pct}%, rgba(0,0,0,0.1) ${pct}%)`;
+  });
+}
+updateTokenCalc();
+
+function updateUnitEcon() {
+  const arpu = +document.getElementById('arpuSlider').value;
+  const server = +document.getElementById('serverSlider').value;
+  const tokenCost = +document.getElementById('tokenCostSlider').value;
+
+  document.getElementById('arpuVal').textContent = '$' + arpu;
+  document.getElementById('serverVal').textContent = '$' + server;
+  document.getElementById('tokenCostVal').textContent = '$' + tokenCost;
+
+  const totalCost = server + tokenCost + 2; // +$2 for shared overhead
+  const profit = arpu - totalCost;
+  const marginPct = Math.round(profit / arpu * 100);
+
+  document.getElementById('ueRevenue').textContent = '$' + arpu;
+  document.getElementById('ueCost').textContent = '$' + totalCost;
+  document.getElementById('ueMargin').textContent = (profit > 0 ? '+' : '') + '$' + profit.toFixed(1);
+  document.getElementById('ueMargin').style.color = profit > 0 ? 'var(--gold)' : '#CC4444';
+  document.getElementById('ueMarginPct').textContent = marginPct + '%';
+  document.getElementById('ueMarginPct').className = 'metric-trend ' + (profit > 0 ? 'trend-up' : 'trend-down');
+
+  ['arpuSlider','serverSlider','tokenCostSlider'].forEach(id => {
+    const el = document.getElementById(id);
+    const pct = ((el.value - el.min) / (el.max - el.min) * 100).toFixed(1);
+    el.style.background = `linear-gradient(90deg, var(--gold) ${pct}%, rgba(0,0,0,0.1) ${pct}%)`;
+  });
+}
+updateUnitEcon();
+
+// === SKILLS CAROUSEL ===
+const skillData = {
+  browser: { title: ' Браузерная автоматизация (agent-browser)', desc: 'Полное управление браузером через Puppeteer: авторизация, клики, формы, скриншоты. Мощнейший скил для веб-автоматизации. Безопасность: ВЫСОКАЯ — имеет доступ к любым сайтам пользователя. В нашем маркетплейсе: обязательная пометка «требует повышенного доверия».' },
+  files: { title: ' Файловая система', desc: 'Чтение, создание, редактирование, переименование документов и папок. Базовый скил, входящий в топ-53 официальных. Низкий риск при правильной песочнице — операции ограничены домашней директорией.' },
+  media: { title: ' Медиа-обработка', desc: 'Ресайз изображений, конвертация аудио, извлечение текста из PDF через ffmpeg и аналоги. Используется для обработки подкастов, видео, документов. Практически безвредный скил без сетевых запросов.' },
+  code: { title: ' Запуск кода (code-runner)', desc: 'Выполнение Python/Shell скриптов и возврат результатов. ВНИМАНИЕ: высокий риск. Обязательна изоляция в Docker-контейнере. В нашей песочнице: все shell-команды проходят RED/YELLOW проверку.' },
+  api: { title: ' Внешние API', desc: 'Отправка email, создание задач в Notion, управление умным домом, интеграции с сервисами. Средний риск. Необходима проверка на утечку API-ключей — именно через этот тип скилов происходят большинство краж.' },
+  office: { title: ' Google Workspace и Excel', desc: 'Управление Gmail, Drive, Календарём (скил gog). Excel-автоматор для сводных таблиц. Самые востребованные корпоративные скилы. Включены в официальную 53-ку. Необходима OAuth-авторизация через безопасный поток.' },
+  ai: { title: ' AI-системные скилы', desc: 'self-improving-agent: бот учится на ошибках. memory: долговременная память. find-skills: помогает найти нужный скил. Это мета-скилы, делающие агента умнее. Безопасность средняя: требуют write-доступа к конфигам.' },
+  home: { title: ' Умный дом (smart-home)', desc: 'Управление Home Assistant, Philips Hue, устройствами. Отличный стартовый скил для тестирования — простой, понятный результат. Ограниченный периметр действий снижает риски до минимума.' },
+  travel: { title: ' Планировщик путешествий (trip-planner)', desc: 'Построение маршрутов, поиск билетов, бронирование. Использует browser-агента + внешние API. Средний риск. Популярен как демо-скил для презентаций возможностей OpenClaw.' },
+  security: { title: ' Аудит безопасности (security-audit)', desc: 'Проверяет другие скилы перед установкой. Ищет паттерны: curl|bash, eval(, скрытые запросы, wildcard в allowlist. Первый скил, который нужно установить в любой свежий инстанс. Входит в официальную 53-ку.' },
+};
+
+function showSkill(key) {
+  document.querySelectorAll('.skill-chip').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const d = skillData[key];
+  document.getElementById('skillDetailPanel').innerHTML = `<div class="skill-detail-title">${d.title}</div><div class="skill-detail-desc">${d.desc}</div>`;
+}
+
+// === PREMORTEM POPUPS ===
+const premortemData = {
+  1: {
+    badge: '🔴 Критичный риск',
+    title: 'Нет канала привлечения клиентов',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Это <strong>самый опасный риск</strong> — вероятность 8/10. Продукт готов, но никто о нём не знает.</p>
+    <p style="margin-bottom:12px;font-size:14px;color:#555;line-height:1.7"><strong>Почему это убивает:</strong></p>
+    <ul style="list-style:none;margin-bottom:20px">
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• Маркетинговый бюджет = $0 на старте</li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• SEO: никто не ищет "купить managed OpenClaw"</li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• Аудитория OpenClaw — разработчики, умеющие устанавливать сами</li>
+      <li style="padding:8px 0;font-size:14px;color:#666">• SetupClaw уже занял этот рынок, потратив годы на репутацию</li>
+    </ul>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Как предотвратить</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">До написания кода: найти 20 человек в Telegram-чатах и получить хотя бы 3 предоплаты. Определить конкретное место, где живут первые 100 клиентов. Построить один надёжный канал до запуска.</p>
+    </div>`
+  },
+  2: {
+    badge: '🔴 Критичный риск',
+    title: 'Никому не нужен продукт',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Вы решили проблему, которой не существует для целевой аудитории. Вероятность: 6/10.</p>
+    <p style="margin-bottom:12px;font-size:14px;color:#555;line-height:1.7"><strong>Суровая реальность рынка:</strong></p>
+    <ul style="list-style:none;margin-bottom:20px">
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• Активных пользователей OpenClaw — тысячи, не миллионы</li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• Разработчики ЛЮБЯТ возиться с установкой — это их хобби</li>
+      <li style="padding:8px 0;font-size:14px;color:#666">• Пользователи говорят: "Я лучше 30 минут потрачу и сделаю сам"</li>
+    </ul>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Стратегия выхода</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">Не делать универсальный маркетплейс. Начать с нишевого вертикального решения: "OpenClaw для SEO-специалистов", "OpenClaw для маркетологов". Вертикальный фокус увеличивает шанс успеха до 40%.</p>
+    </div>`
+  },
+  3: {
+    badge: '🔴 Критичный риск',
+    title: 'Инцидент безопасности → крах доверия',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Один вредоносный скил прошёл проверку. Один гневный пост на Reddit. Репутация убита навсегда. Вероятность: 7/10.</p>
+    <p style="margin-bottom:12px;font-size:14px;color:#555;line-height:1.7"><strong>Почему это фатально:</strong></p>
+    <ul style="list-style:none;margin-bottom:20px">
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• ~20% публичных скилов когда-либо были вредоносными в ClawHub</li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• Ваш сканер — несколько grep-правил, не полноценный аудит</li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:14px;color:#666">• Нет команды 5 security-инженеров, как в крупных компаниях</li>
+      <li style="padding:8px 0;font-size:14px;color:#666">• У вас нет плана реагирования на инциденты</li>
+    </ul>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Минимальная защита</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">Использовать LobsterShield v2 как основу. Начать только с официальными 53 скилами — никаких пользовательских загрузок в первый год. Застраховать киберриски. Написать план антикризисных коммуникаций до запуска.</p>
+    </div>`
+  },
+  4: {
+    badge: '🟡 Высокий риск',
+    title: 'Затянули разработку',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">6-9 месяцев пишете идеальный продукт. Выходите — а конкуренты уже тут. Вероятность: 7/10.</p>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Правило MVP</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">MVP за 4 недели максимум. Не писать микросервисы и Kubernetes на старте. Показать продукт пользователям через 2 недели после начала. Список фич замораживается — только после первых 50 пользователей можно добавлять.</p>
+    </div>`
+  },
+  5: {
+    badge: '🟡 Высокий риск',
+    title: 'Пустой маркетплейс',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Классическая проблема курицы и яйца. Нет авторов → нет скилов → нет пользователей. Вероятность: 6/10.</p>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Решение</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">НЕ запускать открытый маркетплейс сразу. Начать с кюрированного каталога: только 53 официальных скила + 10-20 которые вы проверили лично. Маркетплейс с загрузкой — Фаза 3, не старт.</p>
+    </div>`
+  },
+  6: {
+    badge: '🟡 Высокий риск',
+    title: 'Крупные игроки дают бесплатное',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Tencent WorkBuddy, MiniMax MaxClaw. Бесплатно, с маркетингом в миллиарды. Вероятность: высокая.</p>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Контрстратегия</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">Не конкурировать с ними по цене — проиграете. Позиционироваться как «безопасный + управляемый + независимый» выбор. Фокус на B2B — там корпоративные требования к безопасности важнее цены. Строить экосистему авторов — это труднее скопировать.</p>
+    </div>`
+  },
+  7: {
+    badge: '🟢 Средний риск',
+    title: 'Отрицательная юнит-экономика',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Реальные затраты $17 на пользователя, выручка $10. Масштаб умножает убытки. Вероятность: 5/10.</p>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Решение</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">Честно посчитать юнит-экономику ДО запуска (используйте наш калькулятор выше). Поднять цену до $14.99 за базовый тариф. Заложить своё время на поддержку как реальную статью затрат. Оптимизация токенов напрямую снижает ваши затраты.</p>
+    </div>`
+  },
+  8: {
+    badge: '🟢 Умеренный риск',
+    title: 'OpenClaw закрыт/поглощён',
+    body: `<p style="margin-bottom:16px;font-size:15px;color:#555;line-height:1.7">Весь бизнес вокруг одного open-source проекта. Если он умирает — умираете вместе. Вероятность: 4/10.</p>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Хеджирование</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">Отвязать ключевые модули (безопасность + хостинг) от OpenClaw с самого начала. Архитектура: «мы managed-платформа для AI-агентов», OpenClaw — текущая основа. При необходимости можно мигрировать на AutoGPT, BabyAGI, Eliza или любой другой фреймворк.</p>
+    </div>`
+  }
+};
+
+function showPremortem(num) {
+  const d = premortemData[num];
+  if (!d) return;
+  document.getElementById('popupContent').innerHTML = `
+    <div style="margin-bottom:8px"><span class="badge ${num<=3?'badge-red':num<=6?'badge-yellow':'badge-green'}">${d.badge}</span></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text-primary);margin:12px 0 20px;line-height:1.2">${d.title}</h2>
+    ${d.body}
+  `;
+  document.getElementById('premortemPopup').classList.add('open');
+}
+function closePremortem(e) {
+  if (!e || e.target === document.getElementById('premortemPopup') || e.currentTarget === document.querySelector('.popup-close')) {
+    document.getElementById('premortemPopup').classList.remove('open');
+  }
+}
+
+// === RISK POPUPS ===
+const riskData = {
+  token: { title: 'Рост затрат на токены', color: '#E05A5A', mitigation: 'Локальная маленькая модель для простых задач. Умный кеш для повторяющихся запросов. Бюджетные алерты для пользователей. Обучение оптимальному использованию.', desc: 'Пользователи получают огромные счета — зафиксирован кейс с задачей за $55. При масштабировании это становится критичным. Отток массовый и быстрый.' },
+  security: { title: 'Инцидент безопасности', color: '#CC2222', mitigation: 'LobsterShield v2. Только официальные 53 скила на старте. Детерминированный код проверки без LLM. Киберстрахование. PR-план антикризиса.', desc: 'Критический риск. Один инцидент может убить бизнес. 20% скилов в ClawHub были вредоносными. 341 вредоносный скил найден при аудите.' },
+  bigtech: { title: 'Бесплатные аналоги от крупных игроков', color: '#D4A04C', mitigation: 'Позиционирование «безопасный + независимый». Фокус на B2B где цена не главное. Экосистема авторов — барьер для копирования. Enterprise SLA как дифференциатор.', desc: 'Tencent WorkBuddy и MiniMax MaxClaw уже вышли. Бесплатно + маркетинговый бюджет в миллиарды. Прямая конкуренция по цене — гарантированный проигрыш.' },
+  channel: { title: 'Нет каналов трафика', color: '#5BA85C', mitigation: 'Определить 1 канал до запуска. KOL-партнёрства за бесплатный доступ. Контент-маркетинг (статьи, YouTube). Telegram-сообщества OpenClaw.', desc: 'Самый высокий риск по вероятности 8/10. Традиционный SEO не работает — запросы нишевые. Аудитория разработчиков скептична к рекламе.' },
+  burnout: { title: 'Выгорание команды', color: '#D4A04C', mitigation: 'Разумное распределение задач. Ротация дежурств. 30% времени основателя на технические задачи. Нанять помощь по поддержке раньше, чем кажется нужным.', desc: 'Основатель OpenClaw Peter Steinberger публично признавался, что хотел бросить проект. Маленькие команды без инвестиций особенно уязвимы для выгорания.' },
+  openclaw: { title: 'OpenClaw закрыт или поглощён', color: '#A0C0D8', mitigation: 'Отвязать ключевые модули от OpenClaw. Архитектура "агентная платформа" а не "OpenClaw-платформа". Готовность мигрировать на другой фреймворк.', desc: 'Относительно низкий риск 4/10. Проект существует 2+ года, сообщество большое. Но зависимость от одного OSS-проекта — стратегическая уязвимость.' },
+  regul: { title: 'Ужесточение регулирования AI', color: '#A0C0D8', mitigation: 'Следить за регуляторными изменениями. Встроить compliance в архитектуру заранее. В Европе — GDPR для данных. Аудит логов помогает соответствию требованиям.', desc: 'Умеренный риск. Рынок AI-агентов привлекает внимание регуляторов. Особенно чувствительны операции с файлами и браузером.' },
+  econ: { title: 'Экономический спад', color: '#A0C0D8', mitigation: 'Диверсификация по размеру клиентов. B2B менее чувствителен к спаду. SaaS-подписки более устойчивы чем разовые продажи. Lean операции с первого дня.', desc: 'Низкий риск для нашей ниши. B2B автоматизация обычно выживает в спады — компании урезают людей, но инструменты продуктивности оставляют.' },
+  api: { title: 'Ценовая война на LLM API', color: '#A0C0D8', mitigation: 'Наша ценность — не дешёвые токены, а безопасность и управление. Оптимизация токенов остаётся нашей фичей независимо от цен. Возможность использовать локальные модели (Ollama).', desc: 'Умеренный риск. OpenAI, Anthropic, Google конкурируют по цене. Снижение цен на токены может уменьшить ценность нашей оптимизации.' }
+};
+
+function showRiskDetail(key) {
+  const d = riskData[key];
+  if (!d) return;
+  document.getElementById('riskContent').innerHTML = `
+    <div style="width:40px;height:4px;border-radius:2px;background:${d.color};margin-bottom:16px"></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text-primary);margin-bottom:16px;line-height:1.2">${d.title}</h2>
+    <p style="font-size:15px;color:#555;line-height:1.7;margin-bottom:20px">${d.desc}</p>
+    <div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:20px;border:1px solid rgba(201,169,110,0.2)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">Стратегия снижения</div>
+      <p style="font-size:14px;color:#555;line-height:1.7">${d.mitigation}</p>
+    </div>
+  `;
+  document.getElementById('riskPopup').classList.add('open');
+}
+function closeRisk(e) {
+  if (!e || e.target === document.getElementById('riskPopup')) {
+    document.getElementById('riskPopup').classList.remove('open');
+  }
+}
+
+// === LAYER POPUPS ===
+const layerData = {
+  1: { title: ' Уровень 1: Безопасная песочница', body: `<p style="font-size:15px;color:#555;line-height:1.7;margin-bottom:16px">Это <strong>фундамент всего продукта</strong>. Без него нельзя строить маркетплейс — доверия не будет.</p><p style="font-size:14px;color:#555;line-height:1.7;margin-bottom:12px"><strong>RED-уровень (полная блокировка):</strong></p><ul style="list-style:none;margin-bottom:16px"><li style="padding:6px 0;font-size:14px;color:#666">• curl | bash — классическая атака загрузки и запуска</li><li style="padding:6px 0;font-size:14px;color:#666">• Удаление системных директорий (/etc, /usr, /root)</li><li style="padding:6px 0;font-size:14px;color:#666">• SUID-привилегии и privilege escalation</li></ul><p style="font-size:14px;color:#555;line-height:1.7;margin-bottom:12px"><strong>YELLOW-уровень (требует approval):</strong></p><ul style="list-style:none;margin-bottom:16px"><li style="padding:6px 0;font-size:14px;color:#666">• Доступ к ~/.ssh</li><li style="padding:6px 0;font-size:14px;color:#666">• Массовое удаление файлов</li><li style="padding:6px 0;font-size:14px;color:#666">• Изменение конфигурационных файлов</li></ul><div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:16px"><p style="font-size:14px;color:#555">Все решения принимает <strong>детерминированный код</strong>, не LLM. Никакой Prompt Injection не обойдёт проверку.</p></div>` },
+  2: { title: ' Уровень 2: Управляемый облачный сервис', body: `<p style="font-size:15px;color:#555;line-height:1.7;margin-bottom:16px">Основная монетизация. Подписки от $9.99 до $999/мес. Ключевая ценность — «просто работает» и дешевле чем делать самому.</p><p style="font-size:14px;color:#555;line-height:1.7;margin-bottom:12px"><strong>Ключевые функции:</strong></p><ul style="list-style:none;margin-bottom:16px"><li style="padding:6px 0;font-size:14px;color:#666">• One-click деплой: DigitalOcean / Tencent / AWS за 3 минуты</li><li style="padding:6px 0;font-size:14px;color:#666">• Оптимизация токенов: -60-80% затрат через локальный кеш</li><li style="padding:6px 0;font-size:14px;color:#666">• Автообновления: безопасные патчи без участия клиента</li><li style="padding:6px 0;font-size:14px;color:#666">• Мониторинг 24/7: алерты о проблемах до того, как клиент заметит</li></ul><div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:16px"><p style="font-size:14px;color:#555">Реальный кейс: пользователи OpenClaw тратят до $55 на одну задачу. Наша оптимизация возвращает контроль над расходами.</p></div>` },
+  3: { title: ' Уровень 3: Маркетплейс скилов', body: `<p style="font-size:15px;color:#555;line-height:1.7;margin-bottom:16px">Самый высокомаржинальный уровень (95% на комиссии). Строим на базе ClawHub + OpenClacky.</p><p style="font-size:14px;color:#555;line-height:1.7;margin-bottom:12px"><strong>Модель работы:</strong></p><ul style="list-style:none;margin-bottom:16px"><li style="padding:6px 0;font-size:14px;color:#666">• Автор загружает скил → наш сканер проверяет безопасность</li><li style="padding:6px 0;font-size:14px;color:#666">• Проходит → попадает в каталог (бесплатный или платный)</li><li style="padding:6px 0;font-size:14px;color:#666">• Пользователь устанавливает одной кнопкой</li><li style="padding:6px 0;font-size:14px;color:#666">• Мы забираем 20-30% от продаж платных скилов</li></ul><div style="background:rgba(201,169,110,0.1);border-radius:12px;padding:16px"><p style="font-size:14px;color:#555">OpenClacky добавляет: шифрование кода, white-label, автообновления для всех покупателей. Авторы могут продавать как SaaS.</p></div>` }
+};
+
+function showLayerDetail(num) {
+  const d = layerData[num];
+  document.getElementById('layerContent').innerHTML = `
+    <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text-primary);margin-bottom:20px;line-height:1.2">${d.title}</h2>
+    ${d.body}
+  `;
+  document.getElementById('layerPopup').classList.add('open');
+}
+function closeLayer(e) {
+  if (!e || e.target === document.getElementById('layerPopup')) {
+    document.getElementById('layerPopup').classList.remove('open');
+  }
+}
+
+// === PROBABILITY BARS ANIMATION ===
+function animateProbBars() {
+  const fills = document.querySelectorAll('.prob-bar-fill');
+  fills.forEach(f => {
+    const w = f.style.width;
+    f.style.width = '0%';
+    setTimeout(() => { f.style.width = w; }, 50);
+  });
+}
+
+// === INFRASTRUCTURE OPS ===
+const infraOps = [
+  { name: 'Аренда серверов + Managed хостинг', difficulty: 'Средняя', margin: '70%', market: 'Массовый' },
+  { name: 'Маркетплейс скилов (комиссия)', difficulty: 'Средняя', margin: '95%', market: 'Создатели' },
+  { name: 'PayGate — монетизация в боте', difficulty: 'Низкая', margin: '100%', market: 'Массовый' },
+  { name: 'OpenClacky — платные скилы', difficulty: 'Средняя', margin: '20-30%', market: 'Создатели' },
+  { name: 'ClawManager SaaS', difficulty: 'Высокая', margin: '50-60%', market: 'B2B' },
+  { name: 'Managed LLM Gateway', difficulty: 'Средняя', margin: '40%', market: 'Высокочастотные' },
+  { name: 'Установка как услуга (SaaSS)', difficulty: 'Низкая', margin: '80%+', market: 'Масс.рынок' },
+  { name: 'Реферальные программы VPS', difficulty: 'Минимальная', margin: '10-30%', market: 'Партнёры' },
+  { name: 'Обучение и сертификация', difficulty: 'Низкая', margin: 'Высокая', market: 'Новички' },
+  { name: 'Enterprise: безопасность+приватное облако', difficulty: 'Высокая', margin: '80%+', market: 'B2B крупный' },
+];
+
+function animateInfraOps() {
+  const el = document.getElementById('infraOps');
+  if (!el || el.innerHTML) return;
+  el.innerHTML = `<table class="biz-table">
+    <thead><tr><th>#</th><th>Бизнес-модель</th><th>Сложность</th><th>Маржа</th><th>Рынок</th></tr></thead>
+    <tbody>${infraOps.map((op,i) => `<tr><td style="font-weight:700;color:var(--gold)">${i+1}</td><td class="td-bold">${op.name}</td><td>${op.difficulty}</td><td class="td-gold">${op.margin}</td><td>${op.market}</td></tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// === PLAN SELECTION ===
+function selectPlan(plan) {
+  document.querySelectorAll('.pricing-card').forEach(c => c.style.transform = '');
+  event.currentTarget.style.transform = 'translateY(-10px) scale(1.03)';
+}
+
+// === INDICATOR EXPAND ===
+function expandIndicator(row) {
+  row.style.background = row.style.background ? '' : 'rgba(201,169,110,0.08)';
+}
+
+// === KEYBOARD NAVIGATION ===
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closePremortem();
+    closeRisk();
+    closeLayer();
+    if (document.querySelector('.detail-view.active')) closeDetail();
+  }
+});
+
+// Init
+setTimeout(animateInfraOps, 100);
+</script>
+</body>
+</html>
